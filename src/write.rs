@@ -51,6 +51,16 @@ impl<'a> ByteWriter<'a> {
         self.write(&val.to_le_bytes())
     }
 
+    /// Write i32 to the buffer.
+    pub fn write_i32(&mut self, val: i32) -> Result<(), WriteError> {
+        self.write(&val.to_le_bytes())
+    }
+
+    /// Write i64 to the buffer.
+    pub fn write_i64(&mut self, val: i64) -> Result<(), WriteError> {
+        self.write(&val.to_le_bytes())
+    }
+
     /// Write varint-encoded u32 to the buffer.
     pub fn write_varuint32(&mut self, mut val: u32) -> Result<(), WriteError> {
         loop {
@@ -95,6 +105,16 @@ impl<'a> ByteWriter<'a> {
     /// Write varint-encoded i64 to the buffer.
     pub fn write_varint64(&mut self, val: i64) -> Result<(), WriteError> {
         self.write_varuint64(((val >> 63) ^ (val << 1)) as u64)
+    }
+
+    /// Write float to the buffer.
+    pub fn write_f32(&mut self, val: f32) -> Result<(), WriteError> {
+        self.write_u32(val.to_bits())
+    }
+
+    /// Write double to the buffer.
+    pub fn write_f64(&mut self, val: f64) -> Result<(), WriteError> {
+        self.write_u64(val.to_bits())
     }
 
     /// Write length-delimited data to the buffer.

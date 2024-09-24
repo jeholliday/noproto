@@ -1,6 +1,9 @@
 use crate::read::ByteReader;
 use crate::write::ByteWriter;
-use crate::{Message, Oneof, OptionalMessage, ReadError, RepeatedMessage, WireType, WriteError};
+use crate::{
+    Fixed32, Fixed64, Message, Oneof, OptionalMessage, ReadError, RepeatedMessage, SFixed32, SFixed64, WireType,
+    WriteError,
+};
 
 impl Message for bool {
     const WIRE_TYPE: WireType = WireType::Varint;
@@ -47,7 +50,7 @@ impl Message for u32 {
         w.write_varuint32(*self)
     }
     fn read_raw(&mut self, r: &mut ByteReader) -> Result<(), ReadError> {
-        *self = r.read_varuint32()?.try_into().map_err(|_| ReadError)?;
+        *self = r.read_varuint32()?;
         Ok(())
     }
 }
@@ -58,7 +61,7 @@ impl Message for u64 {
         w.write_varuint64(*self)
     }
     fn read_raw(&mut self, r: &mut ByteReader) -> Result<(), ReadError> {
-        *self = r.read_varuint64()?.try_into().map_err(|_| ReadError)?;
+        *self = r.read_varuint64()?;
         Ok(())
     }
 }
@@ -91,7 +94,7 @@ impl Message for i32 {
         w.write_varint32(*self)
     }
     fn read_raw(&mut self, r: &mut ByteReader) -> Result<(), ReadError> {
-        *self = r.read_varint32()?.try_into().map_err(|_| ReadError)?;
+        *self = r.read_varint32()?;
         Ok(())
     }
 }
@@ -102,7 +105,73 @@ impl Message for i64 {
         w.write_varint64(*self)
     }
     fn read_raw(&mut self, r: &mut ByteReader) -> Result<(), ReadError> {
-        *self = r.read_varint64()?.try_into().map_err(|_| ReadError)?;
+        *self = r.read_varint64()?;
+        Ok(())
+    }
+}
+
+impl Message for f32 {
+    const WIRE_TYPE: WireType = WireType::Fixed32;
+    fn write_raw(&self, w: &mut ByteWriter) -> Result<(), WriteError> {
+        w.write_f32(*self)
+    }
+    fn read_raw(&mut self, r: &mut ByteReader) -> Result<(), ReadError> {
+        *self = r.read_f32()?;
+        Ok(())
+    }
+}
+
+impl Message for f64 {
+    const WIRE_TYPE: WireType = WireType::Fixed64;
+    fn write_raw(&self, w: &mut ByteWriter) -> Result<(), WriteError> {
+        w.write_f64(*self)
+    }
+    fn read_raw(&mut self, r: &mut ByteReader) -> Result<(), ReadError> {
+        *self = r.read_f64()?;
+        Ok(())
+    }
+}
+
+impl Message for Fixed32 {
+    const WIRE_TYPE: WireType = WireType::Fixed32;
+    fn write_raw(&self, w: &mut ByteWriter) -> Result<(), WriteError> {
+        w.write_u32(self.value)
+    }
+    fn read_raw(&mut self, r: &mut ByteReader) -> Result<(), ReadError> {
+        self.value = r.read_u32()?;
+        Ok(())
+    }
+}
+
+impl Message for Fixed64 {
+    const WIRE_TYPE: WireType = WireType::Fixed64;
+    fn write_raw(&self, w: &mut ByteWriter) -> Result<(), WriteError> {
+        w.write_u64(self.value)
+    }
+    fn read_raw(&mut self, r: &mut ByteReader) -> Result<(), ReadError> {
+        self.value = r.read_u64()?;
+        Ok(())
+    }
+}
+
+impl Message for SFixed32 {
+    const WIRE_TYPE: WireType = WireType::Fixed32;
+    fn write_raw(&self, w: &mut ByteWriter) -> Result<(), WriteError> {
+        w.write_i32(self.value)
+    }
+    fn read_raw(&mut self, r: &mut ByteReader) -> Result<(), ReadError> {
+        self.value = r.read_i32()?;
+        Ok(())
+    }
+}
+
+impl Message for SFixed64 {
+    const WIRE_TYPE: WireType = WireType::Fixed64;
+    fn write_raw(&self, w: &mut ByteWriter) -> Result<(), WriteError> {
+        w.write_i64(self.value)
+    }
+    fn read_raw(&mut self, r: &mut ByteReader) -> Result<(), ReadError> {
+        self.value = r.read_i64()?;
         Ok(())
     }
 }

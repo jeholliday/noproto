@@ -52,6 +52,30 @@ impl<'a> ByteReader<'a> {
         Ok(u64::from_le_bytes(self.read()?))
     }
 
+    /// Read a i32 from the buffer.
+    pub fn read_i32(&mut self) -> Result<i32, ReadError> {
+        Ok(i32::from_le_bytes(self.read()?))
+    }
+
+    /// Read a i64 from the buffer.
+    pub fn read_i64(&mut self) -> Result<i64, ReadError> {
+        Ok(i64::from_le_bytes(self.read()?))
+    }
+
+    /// Read a f32 from the buffer.
+    pub fn read_f32(&mut self) -> Result<f32, ReadError> {
+        let bytes = self.read_slice(4)?;
+        let int_value = u32::from_le_bytes(bytes.try_into().unwrap());
+        Ok(f32::from_bits(int_value))
+    }
+
+    /// Read a f64 from the buffer.
+    pub fn read_f64(&mut self) -> Result<f64, ReadError> {
+        let bytes = self.read_slice(8)?;
+        let int_value = u64::from_le_bytes(bytes.try_into().unwrap());
+        Ok(f64::from_bits(int_value))
+    }
+
     /// Read a slice of length `len` from the buffer.
     pub fn read_slice(&mut self, len: usize) -> Result<&'a [u8], ReadError> {
         let res = self.data.get(0..len).ok_or(ReadError)?;
@@ -172,7 +196,9 @@ impl<'a, 'b> Iterator for FieldIter<'a, 'b> {
         let tag = header >> 3;
         let wire_type = match header & 0b111 {
             0 => WireType::Varint,
+            1 => WireType::Fixed64,
             2 => WireType::LengthDelimited,
+            5 => WireType::Fixed32,
             _ => return Some(Err(ReadError)),
         };
 
@@ -192,6 +218,14 @@ impl<'a, 'b> Iterator for FieldIter<'a, 'b> {
                     Err(e) => return Some(Err(e)),
                 }
             }
+            WireType::Fixed32 => match self.r.read_slice(4) {
+                Ok(x) => x,
+                Err(e) => return Some(Err(e)),
+            },
+            WireType::Fixed64 => match self.r.read_slice(8) {
+                Ok(x) => x,
+                Err(e) => return Some(Err(e)),
+            },
         };
         Some(Ok(FieldReader { tag, data, wire_type }))
     }

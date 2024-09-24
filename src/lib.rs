@@ -4,10 +4,12 @@
 
 mod impls;
 mod read;
+mod types;
 mod write;
 
 pub use read::ReadError;
 use read::{ByteReader, FieldReader};
+pub use types::*;
 use write::ByteWriter;
 pub use write::WriteError;
 
@@ -32,12 +34,14 @@ pub use noproto_derive::*;
 pub enum WireType {
     /// Varint.
     Varint = 0,
-    //SixtyFourBit = 1,
+    /// 64-bit.
+    Fixed64 = 1,
     /// Length-delimited.
     LengthDelimited = 2,
     //StartGroup = 3,
     //EndGroup = 4,
-    //ThirtyTwoBit = 5,
+    /// 32-bit.
+    Fixed32 = 5,
 }
 
 /// A protobuf message.

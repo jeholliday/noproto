@@ -33,19 +33,19 @@ Not implemented (yet?):
 
 | Protobuf | Rust | 
 |-|-|
-| `bool` | bool |
-| `int32` | TODO |
+| `bool` | `bool` |
+| `int32` | `i32` |
 | `uint32` | `u32` |
-| `sint32` | `i32` |
-| `fixed32` | TODO |
-| `sfixed32` | TODO |
-| `int64` | TODO |
+| `sint32` | TODO |
+| `fixed32` | `noproto::Fixed32` |
+| `sfixed32` | `noprooto::SFixed32` |
+| `int64` | `i64` |
 | `uint64` | `u64` |
-| `sint64` | `i64` |
-| `fixed64` | TODO |
-| `sfixed64` | TODO |
-| `float` | TODO |
-| `double` | TODO |
+| `sint64` | TODO |
+| `fixed64` | `noproto::Fixed64`  |
+| `sfixed64` | `noproto::SFixed64`  |
+| `float` | `f32` |
+| `double` | `f64` |
 | `string` | `heapless::String<N>` |
 | `bytes` | `heapless::Vec<u8, N>` |
 

@@ -14,7 +14,8 @@ categories = [
 keywords = ["protobuf", "serialization"]
 
 [features]
-default = ["derive"]
+default = ["std", "derive"]
+std = []
 derive = ["dep:noproto-derive"]
 
 [dependencies]
