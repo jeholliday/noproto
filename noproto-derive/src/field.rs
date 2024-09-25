@@ -7,6 +7,7 @@ use syn::{Attribute, Lit, Meta, MetaList, MetaNameValue, NestedMeta};
 pub enum Kind {
     Single,
     Repeated,
+    Packed,
     Optional,
     Oneof,
 }
@@ -156,6 +157,8 @@ fn kind_attr(attr: &Meta) -> Option<Kind> {
 
     if path.is_ident("repeated") {
         Some(Kind::Repeated)
+    } else if path.is_ident("packed") {
+        Some(Kind::Packed)
     } else if path.is_ident("optional") {
         Some(Kind::Optional)
     } else if path.is_ident("oneof") {

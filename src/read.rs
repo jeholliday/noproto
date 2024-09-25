@@ -133,8 +133,14 @@ impl<'a> ByteReader<'a> {
         Ok(res)
     }
 
-    /// Read a varint-encoded i32 from the buffer.
+    /// Read varint-encoded i32 from the buffer.
     pub fn read_varint32(&mut self) -> Result<i32, ReadError> {
+        let u = self.read_varuint32()?;
+        Ok(u as i32)
+    }
+
+    /// Read a sint32 from the buffer.
+    pub fn read_sint32(&mut self) -> Result<i32, ReadError> {
         let u = self.read_varuint32()?;
 
         // zigzag encoding
@@ -163,6 +169,12 @@ impl<'a> ByteReader<'a> {
 
     /// Read a varint-encoded i64 from the buffer.
     pub fn read_varint64(&mut self) -> Result<i64, ReadError> {
+        let u = self.read_varuint64()?;
+        Ok(u as i64)
+    }
+
+    /// Read a sint64 from the buffer.
+    pub fn read_sint64(&mut self) -> Result<i64, ReadError> {
         let u = self.read_varuint64()?;
 
         // zigzag encoding
@@ -262,6 +274,21 @@ impl<'a> FieldReader<'a> {
         let mut m = M::Message::default();
         self.read(&mut m)?;
         msg.append(m)?;
+        Ok(())
+    }
+
+    /// Read a packed field into a message of type `M`.
+    pub fn read_packed<M: RepeatedMessage>(self, msg: &mut M) -> Result<(), ReadError> {
+        if self.wire_type != WireType::LengthDelimited {
+            return Err(ReadError);
+        }
+
+        let mut r = ByteReader::new(self.data);
+        while !r.eof() {
+            let mut m = M::Message::default();
+            m.read_raw(&mut r)?;
+            msg.append(m)?;
+        }
         Ok(())
     }
 

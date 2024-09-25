@@ -22,7 +22,6 @@ Not implemented (yet?):
 - Support multiple protobuf encodings. Protobuf "types" are more like "type + wire encoding" all in one,
   so one Rust type can be encoded multiple ways on the wire. `noproto` currently assumes the Rust type is enough
   to deduce how it should be encoded on the wire, which is not true.
-- Support more types (see below)
 - Impls for `alloc` containers (goal is to be `no-alloc`, but we could still have them optionally).
 - Impls for `&[T]` for repeated fields (only doable for writing, not reading)
 - Tool to compile `.proto` files into Rust code.
@@ -31,17 +30,17 @@ Not implemented (yet?):
 
 ## Type mapping
 
-| Protobuf | Rust | 
+| Protobuf | Rust |
 |-|-|
 | `bool` | `bool` |
-| `int32` | `i32` |
+| `int32` | `noproto::Int32` |
 | `uint32` | `u32` |
-| `sint32` | TODO |
+| `sint32` | `i32` |
 | `fixed32` | `noproto::Fixed32` |
 | `sfixed32` | `noprooto::SFixed32` |
-| `int64` | `i64` |
+| `int64` | `noproto::Int64` |
 | `uint64` | `u64` |
-| `sint64` | TODO |
+| `sint64` | `i64` |
 | `fixed64` | `noproto::Fixed64`  |
 | `sfixed64` | `noproto::SFixed64`  |
 | `float` | `f32` |

@@ -83,6 +83,7 @@ fn try_message(input: TokenStream) -> Result<TokenStream, Error> {
         match field.kind {
             Kind::Single => quote!(w.write_field(#tag, &#ident)?;),
             Kind::Repeated => quote!(w.write_repeated(#tag, &#ident)?;),
+            Kind::Packed => quote!(w.write_packed(#tag, &#ident)?;),
             Kind::Optional => quote!(w.write_optional(#tag, &#ident)?;),
             Kind::Oneof => quote!(w.write_oneof(&#ident)?;),
         }
@@ -93,6 +94,7 @@ fn try_message(input: TokenStream) -> Result<TokenStream, Error> {
         let read = match field.kind {
             Kind::Single => quote!(r.read(&mut #ident)?;),
             Kind::Repeated => quote!(r.read_repeated(&mut #ident)?;),
+            Kind::Packed => quote!(r.read_packed(&mut #ident)?;),
             Kind::Optional => quote!(r.read_optional(&mut #ident)?;),
             Kind::Oneof => quote!(r.read_oneof(&mut #ident)?;),
         };

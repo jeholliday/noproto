@@ -46,3 +46,38 @@ pub struct SFixed64 {
     /// Value
     pub value: i64,
 }
+
+impl SFixed64 {
+    /// Create a new SFixed64
+    pub fn new(value: i64) -> Self {
+        Self { value }
+    }
+}
+
+/// Int32 integer
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct Int32 {
+    /// Value
+    pub value: i32,
+}
+
+impl Int32 {
+    /// Create a new Int32
+    pub fn new(value: i32) -> Self {
+        Self { value }
+    }
+}
+
+/// Int64 integer
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct Int64 {
+    /// Value
+    pub value: i64,
+}
+
+impl Int64 {
+    /// Create a new Int64
+    pub fn new(value: i64) -> Self {
+        Self { value }
+    }
+}

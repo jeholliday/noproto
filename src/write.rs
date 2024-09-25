@@ -99,11 +99,21 @@ impl<'a> ByteWriter<'a> {
 
     /// Write varint-encoded i32 to the buffer.
     pub fn write_varint32(&mut self, val: i32) -> Result<(), WriteError> {
-        self.write_varuint32(((val >> 31) ^ (val << 1)) as u32)
+        self.write_varuint32(val as u32)
     }
 
     /// Write varint-encoded i64 to the buffer.
     pub fn write_varint64(&mut self, val: i64) -> Result<(), WriteError> {
+        self.write_varuint64(val as u64)
+    }
+
+    /// Write sint32 to the buffer.
+    pub fn write_sint32(&mut self, val: i32) -> Result<(), WriteError> {
+        self.write_varuint32(((val >> 31) ^ (val << 1)) as u32)
+    }
+
+    /// Write sint64 to the buffer.
+    pub fn write_sint64(&mut self, val: i64) -> Result<(), WriteError> {
         self.write_varuint64(((val >> 63) ^ (val << 1)) as u64)
     }
 
@@ -161,6 +171,20 @@ impl<'a> ByteWriter<'a> {
         for i in msg.iter()? {
             self.write_field(tag, i)?;
         }
+        Ok(())
+    }
+
+    /// Write a packed protobuf field to the buffer.
+    pub fn write_packed<M: RepeatedMessage>(&mut self, tag: u32, msg: &M) -> Result<(), WriteError> {
+        self.write_varuint32((tag << 3) | (WireType::LengthDelimited as u32))?;
+
+        self.write_length_delimited(|w| {
+            for i in msg.iter()? {
+                i.write_raw(w)?;
+            }
+            Ok(())
+        })?;
+
         Ok(())
     }
 

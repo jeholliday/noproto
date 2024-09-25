@@ -7,6 +7,9 @@ mod read;
 mod types;
 mod write;
 
+#[cfg(test)]
+mod tests;
+
 pub use read::ReadError;
 use read::{ByteReader, FieldReader};
 pub use types::*;
